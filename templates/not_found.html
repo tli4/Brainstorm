@@ -8,7 +8,7 @@
     <meta name="description" content="A Wikipedia Trivia Game">
     <meta name="author" content="">
 
-    <title>Brainstorm</title>
+    <title>Brainstorm - item not found!</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -31,25 +31,16 @@
       </div>
     </nav>
 
-    <h1 class="question" id="center">Welcome to Brainstorm</h1>
-    <h5 class="question" id="center">A Wikipedia Trivia Game</h5>
+    <h3 class="question" id="center">😳It seems like the word not in our solr index, please try another word.</h3>
 
-    <form id="searchbar" action="game" method="POST">
-    <div class="row">
-      <div class="col-lg-4"></div>
-        <div class="col-lg-4 col-lg-offset-4">
-          <div class="input-group">
-            <input name="search" type="text" class="form-control" placeholder="Please type in a word to generate question">
-              <div class="input-group-append">
-                <button class="btn btn-secondary" type="submit">
-                  <i class="fa fa-search"></i>
-                </button>
-            </div>
+      <!-- Submit -->
+      <div class = "next">
+          <div class="container">
+              <div class="row justify-content-center">
+                  <button onclick="next()" class="btn btn-primary btn-lg"> Next Question </button>
+              </div>
           </div>
-        </div>
-      <div class="col-lg-4"></div>
-    </div>
-    </form>
+      </div>
           
     </div>
     

@@ -1,3 +1,15 @@
+var i = 100;
+
+var counterBack = setInterval(function(){
+  i--;
+  if (i > 0){
+    $('.progress-bar').css('width', i+'%');
+  } else {
+    clearInterval(counterBack);
+  }
+  
+}, 1000);
+
 var selected = "";
 
 function submit() {
@@ -14,5 +26,11 @@ function select(str) {
 }
 
 function next() {
-    document.location.href = '/game';
+    document.location.href = '/index';
 }
+
+$("#searchbar").keyup(function(event) {
+    if (event.keyCode === 13) {
+        $("#myButton").click();
+    }
+});

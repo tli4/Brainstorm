@@ -1,1 +1,6 @@
 flask
+nltk
+textblob
+requests
+bs4
+pysolr

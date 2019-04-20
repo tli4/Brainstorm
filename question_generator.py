@@ -1,5 +1,3 @@
-from flask import Flask, render_template, request, redirect, url_for
-
 from nltk.corpus import wordnet as wn
 from textblob import TextBlob
 
@@ -7,10 +5,34 @@ import re
 import json
 
 import requests
-import pysolr
 from bs4 import BeautifulSoup
 
-from random import randint
+"""
+import wikipedia
+http://34.83.164.119:8983/solr/wiki/select?q=id%3A12
+"""
+
+
+def solr_api(IP_addr, PORT, doc_id):
+
+    solr_addr = 'http://' + IP_addr + ':' + PORT + '/solr/wiki_dev/select?q=id%3A' + str(doc_id)
+    result = requests.get(solr_addr)
+    soup = BeautifulSoup(result.content)
+    doc_content_all = str(soup)
+    doc_text_index = doc_content_all.find('text')
+    doc_content_text = doc_content_all[doc_text_index + 8 : -1]
+
+    doc_url_index = doc_content_all.find('url')
+    doc_title_index = doc_content_all.find('title')
+
+    doc_title = doc_content_all[doc_title_index + 9:doc_text_index - 13]
+    doc_url = doc_content_all[doc_url_index + 7:doc_title_index - 13]
+
+
+    return doc_content_text, doc_url, doc_title
+
+
+
 
 class Article:
     """Retrieves and analyzes wikipedia articles"""
@@ -72,7 +94,7 @@ class Article:
             # and probably won't be a good fit
             return None
 
-        # tag_map = {word.lower(): tag for word, tag in sentence.tags}
+        tag_map = {word.lower(): tag for word, tag in sentence.tags}
 
         replace_nouns = []
         for word, tag in sentence.tags:
@@ -124,12 +146,6 @@ class Article:
         trivia['question'] = sentence
         return trivia
 
-def solr_api(ip_addr, port, coreName, search_id, search_text):
-    solr_addr = 'http://' + ip_addr + ':' + port + '/solr/' + coreName + '/'
-    solr = pysolr.Solr(solr_addr, timeout=10)
-    request = solr.search(search_id + ':' + search_text)
-    return request
-
 def generate_trivia(doc, url, title):
     """Generates trivia questions from wikipedia articles. If no
     doc_summary are supplied, pulls from these sample articles:
@@ -140,76 +156,44 @@ def generate_trivia(doc, url, title):
     # Use the sample articles if the user didn't supply any
 
     # Retrieve the trivia sentences
+    questions = []
     article = Article(doc, url, title)
-    questions = article.generate_trivia_sentences()
+    questions = questions + article.generate_trivia_sentences()
 
-    trivia_question = []
+    # Output to stdout or JSON
 
-    for question in questions:
-        if len(question['similar_words']) > 3:
-            trivia_question = question
-            trivia_question['similar_words'] = trivia_question['similar_words'][:3]
-
-    if (trivia_question == []):
-        return False
-
-    # Dev: Output to JSON
-    output_file = open("trivia_question.json", 'w')
-    json.dump(trivia_question, output_file, sort_keys=True, indent=4)
+    output_file = open("question.json", 'w')
+    json.dump(questions, output_file, sort_keys=True, indent=4)
     output_file.close()
-    return trivia_question
 
-
-app = Flask(__name__)
-
-@app.route('/')
-@app.route('/index')
-def index():
-    return render_template('index.html')
-
-@app.route('/game', methods=['GET', 'POST'])
-def game():
-
-    if request.method == 'POST':
-        print(request.form['search'])
-        ip_addr = '34.83.164.119'
-        port = '8983'
-        search_text = request.form['search']
-        search_id = 'text'
-        core_name = 'wiki'
-        
-        search_results = solr_api(ip_addr, port, core_name, search_id, search_text)
-
-        if (search_results.hits == 0):
-            return redirect(url_for('not_found'))
-
-        for result in search_results.docs:
-            trivia = generate_trivia(result['text'][0], result['url'][0], result['title'][0])
-            if (not trivia == False):
-                break
-
-        if (trivia == False):
-            return redirect(url_for('not_found'))
-
-        question = trivia["question"]
-        selection = trivia["similar_words"]
-        answer = trivia["answer"]
-        selection.insert(randint(0,3), answer)
-        return render_template('game.html', question = question, selection = selection, answer = answer)
-
-@app.route('/correct')
-def correct():
-    return render_template('correct.html')
-
-@app.route('/wrong')
-def wrong():
-    return render_template('wrong.html')
-
-@app.route('/not_found')
-def not_found():
-    return render_template('not_found.html')
 
 if __name__ == '__main__':
 
-    app.debug = True
-    app.run()
+    IP_addr = '34.83.164.119'
+    PORT = '8983'
+    doc_id = 25
+
+    doc_body, doc_url, doc_title = solr_api(IP_addr, PORT, doc_id)
+    print(doc_body)
+    print(doc_url)
+    print(doc_title)
+
+    generate_trivia(doc_body, doc_url, doc_title)
+
+
+    """
+
+    if the index number does not exit, change!!
+
+
+    """
+
+
+
+
+
+
+
+
+
+
