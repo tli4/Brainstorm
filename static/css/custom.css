@@ -1,0 +1,27 @@
+body {
+	padding-top: 70px;
+}
+
+.question {
+	padding-top: 50px;
+}
+
+.answers {
+	padding-top: 50px;
+}
+
+.submit {
+	padding-top: 80px;
+}
+
+.next {
+	padding-top: 100px;
+}
+
+.start {
+	padding-top: 100px;
+}
+
+#center {
+	text-align: center
+}
