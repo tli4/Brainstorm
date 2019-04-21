@@ -47,22 +47,25 @@ class Article:
         else:
             synset = synsets[0]
 
-        # Get the hypernym for this synset (again, take the first)
-        hypernym = synset.hypernyms()[0]
-
-        # Get some hyponyms from this hypernym
-        hyponyms = hypernym.hyponyms()
-
-        # Take the name of the first lemma for the first 8 hyponyms
         similar_words = []
-        for hyponym in hyponyms:
-            similar_word = hyponym.lemmas()[0].name().replace('_', ' ')
-            
-            if similar_word != word:
-                similar_words.append(similar_word)
+        if len(synset.hypernyms()) > 0:
 
-            if len(similar_words) == 8:
-                break
+            # Get the hypernym for this synset (again, take the first)
+            hypernym = synset.hypernyms()[0]
+
+            # Get some hyponyms from this hypernym
+            hyponyms = hypernym.hyponyms()
+
+            # Take the name of the first lemma for the first 8 hyponyms
+
+            for hyponym in hyponyms:
+                similar_word = hyponym.lemmas()[0].name().replace('_', ' ')
+                
+                if similar_word != word:
+                    similar_words.append(similar_word)
+
+                if len(similar_words) == 8:
+                    break
 
         return similar_words
 
@@ -176,7 +179,7 @@ def game():
         port = '8983'
         search_text = request.form['search']
         search_id = 'text'
-        core_name = 'wiki'
+        core_name = 'wiki_dev'
         
         search_results = solr_api(ip_addr, port, core_name, search_id, search_text)
 

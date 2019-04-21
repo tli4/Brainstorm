@@ -34,3 +34,7 @@ $("#searchbar").keyup(function(event) {
         $("#myButton").click();
     }
 });
+
+function back() {
+    history.go(-1);
+}
