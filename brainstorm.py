@@ -157,9 +157,9 @@ def generate_trivia(doc, url, title):
         return False
 
     # Dev: Output to JSON
-    output_file = open("trivia_question.json", 'w')
-    json.dump(trivia_question, output_file, sort_keys=True, indent=4)
-    output_file.close()
+    # output_file = open("trivia_question.json", 'w')
+    # json.dump(trivia_question, output_file, sort_keys=True, indent=4)
+    # output_file.close()
     return trivia_question
 
 
@@ -174,7 +174,6 @@ def index():
 def game():
 
     if request.method == 'POST':
-        print(request.form['search'])
         ip_addr = '34.83.164.119'
         port = '8983'
         search_text = request.form['search']
@@ -214,5 +213,5 @@ def not_found():
 
 if __name__ == '__main__':
 
-    app.debug = True
+    # app.debug = True
     app.run()
